@@ -22,7 +22,7 @@ public class HorseMovement : MonoBehaviour
     [SerializeField] Slider[] StaminaSliderAlt;
 
     [SerializeField] AudioSource MooSound;
-    [SerializeField] GameObject CowTiredSound;
+    [SerializeField] GameObject CowTiredSound,CowCrashSound;
  
     Vector3 _Input;
     public float SpeedMultiplier = 1;
@@ -103,18 +103,29 @@ public class HorseMovement : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if(isSprinting && collision.gameObject.GetComponent<CowEnemy>() != null)
+        if(isSprinting )
         {
-            SprintModeIncrease();
-            collision.gameObject.GetComponent<CowEnemy>().TakeDamage(transform.position,collision.contacts[0].point);
-            StaminaSlider.value += .333f;
-          
-            if (StaminaSlider.value > 1)
+            if(rb.velocity.magnitude >= 3)
             {
-                StaminaSlider.value = 1;
-                CheckBarState();
+                Instantiate(CowCrashSound, transform.position, Quaternion.identity);
             }
+           
+            if( collision.gameObject.GetComponent<CowEnemy>() != null)
+            {
+                SprintModeIncrease();
+                collision.gameObject.GetComponent<CowEnemy>().TakeDamage(transform.position, collision.contacts[0].point);
+                StaminaSlider.value += .333f;
+
+                if (StaminaSlider.value > 1)
+                {
+                    StaminaSlider.value = 1;
+                    CheckBarState();
+                }
+            }
+        
         }
+
+        
     }
 
 

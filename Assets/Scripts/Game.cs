@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Game : MonoBehaviour
 {
     public static Game instance;
@@ -11,6 +11,8 @@ public class Game : MonoBehaviour
     public GameObject Wolf;
     int Wave = 1;
     bool running;
+
+   [SerializeField] Text WaveText,wavetext2;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -50,6 +52,9 @@ public class Game : MonoBehaviour
         Debug.Log("WaitTime");
         yield return new WaitForSeconds(5.0f);
         Debug.Log("the wave " + Wave + " has started");
+        WaveText.text = "Wave " + Wave;
+        wavetext2.text = WaveText.text;
+        WaveText.GetComponent<Animator>().Play("Pop");
         for (int i = 0; i < Wave; i++)
         {
             Instantiate(Wolf, Spawnpoints[Random.Range(0, Spawnpoints.Length)].position, Quaternion.identity);

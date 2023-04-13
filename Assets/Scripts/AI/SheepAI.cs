@@ -9,7 +9,7 @@ public class SheepAI : MonoBehaviour
 {
 
     public bool Fenced;
-    bool Midair, Attacked;
+    public bool Midair, Attacked,ropped;
     NavMeshAgent agent;
     float timer, timer2, RandomTimeStep;
     Rigidbody rb;
@@ -24,6 +24,11 @@ public class SheepAI : MonoBehaviour
         RandomTimeStep = Random.Range(1.0f, 8.0f);
         rb = GetComponent<Rigidbody>();
     }
+    public void SetAttackFalse()
+    {
+        Attacked = false;
+        agent.enabled = true;
+    }
 
     // Update is called once per frame
     void Update()
@@ -31,7 +36,7 @@ public class SheepAI : MonoBehaviour
         if (!Attacked)
         {
             timer += Time.deltaTime;
-            if (timer > RandomTimeStep)
+            if (timer > RandomTimeStep && agent.enabled)
             {
                 agent.destination = SetRandomPos();
                 RandomTimeStep = Random.Range(1.0f, 8.0f);
@@ -47,8 +52,24 @@ public class SheepAI : MonoBehaviour
                 rb.freezeRotation = true;
                 agent.enabled = false;
             }
+           
         }
-        
+        if (ropped)
+        {
+            Attacked = false;
+            GetComponent<BoxCollider>().enabled = false;
+            agent.enabled = false;
+        }
+
+
+    }
+
+    public void UnRope()
+    {
+        ropped = false;
+        Attacked = false;
+        GetComponent<BoxCollider>().enabled = true;
+        agent.enabled = true;
     }
 
     Vector3 SetRandomPos()
@@ -85,6 +106,8 @@ public class SheepAI : MonoBehaviour
         }
       
     }
+
+  
 
     void LeaveFence()
     {

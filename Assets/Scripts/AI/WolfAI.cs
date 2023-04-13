@@ -12,6 +12,19 @@ public class WolfAI : MonoBehaviour
     public Transform Center;
     float timer, RandomTimeStep;
     Rigidbody rb;
+    GameObject Sheep;
+    [SerializeField] GameObject WolfObj;
+    public void DestroyWolf()
+    {
+        if (Sheep)
+        {
+            Sheep.transform.SetParent(null);
+            Sheep.GetComponent<SheepAI>().SetAttackFalse();
+        }
+        WolfObj.transform.SetParent(null);
+        Destroy(gameObject);
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -89,8 +102,12 @@ public class WolfAI : MonoBehaviour
             chasing = false;
             wander = false;
             grabbed = true;
+            Sheep = other.gameObject;
         }
     }
+
+   
+  
 
     Vector3 SetRandomPos()
     {
@@ -103,4 +120,6 @@ public class WolfAI : MonoBehaviour
         return new Vector3(x, transform.position.y, z);
 
     }
+
+   
 }

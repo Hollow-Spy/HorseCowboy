@@ -23,7 +23,8 @@ public class CowboyController : MonoBehaviour
     [SerializeField] GameObject LassoHop;
     [SerializeField] float LassoHopSpeed;
     [SerializeField] Transform LassoHopOGPos;
-    [SerializeField] GameObject LassoAnim;
+    [SerializeField] GameObject LassoAnim,LassoHitSound;
+   
     bool isSendingLasso;
     private void Awake()
     {
@@ -66,7 +67,7 @@ public class CowboyController : MonoBehaviour
 
             // LassoTargetBody.AddForce(Vector3.down * x);
             // LassoTargetBody.AddForce(Vector3.right * y);
-            LassoTargetBody.AddForce(Vector3.up);
+            LassoTargetBody.AddForce(Vector3.up * 15);
 
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -93,6 +94,11 @@ public class CowboyController : MonoBehaviour
             if (LassoStuck)
             {
                 Destroy(joint);
+
+                if (LassoTarget.GetComponent<SheepAI>() != null)
+                {
+                    LassoTarget.GetComponent<SheepAI>().UnRope();
+                }
                 LassoStuck = false;
                 LassoHop.transform.SetParent(null);
                 lr.positionCount = 0;
@@ -114,7 +120,7 @@ public class CowboyController : MonoBehaviour
           
         }
 
-        if(Input.GetMouseButtonUp(0) && !LassoStuck && WindingLasso)
+        if(Input.GetMouseButtonUp(0) && !LassoStuck && WindingLasso && !isSendingLasso)
         {
             LassoCircle.SetActive(false);
             LassoAnim.SetActive(false);
@@ -149,7 +155,7 @@ public class CowboyController : MonoBehaviour
         isSendingLasso = false;
         if (hitColliders.Length > 0)
         {
-           
+            Instantiate(LassoHitSound, transform.position, Quaternion.identity);
 
             LassoStuck = true;
             //perhaps more catches if powerup in future
@@ -157,6 +163,10 @@ public class CowboyController : MonoBehaviour
             GameObject Target = hitColliders[0].gameObject;
             LassoTargetBody = Target.GetComponent<Rigidbody>();
 
+            if(Target.GetComponent<SheepAI>() != null)
+            {
+                Target.GetComponent<SheepAI>().ropped = true;
+            }
            
 
             joint = Target.AddComponent<SpringJoint>();
